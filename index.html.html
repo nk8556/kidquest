@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KidQuest: Where Every Day Is an Adventure in Learning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --amber: #F59E0B;
+    --amber-dark: #B45309;
+    --amber-light: #FEF3C7;
+    --amber-mid: #FDE68A;
+    --blue: #3B82F6;
+    --blue-dark: #1D4ED8;
+    --blue-light: #EFF6FF;
+    --green: #22C55E;
+    --green-dark: #15803D;
+    --green-light: #F0FDF4;
+    --coral: #F97316;
+    --coral-light: #FFF7ED;
+    --purple: #8B5CF6;
+    --purple-light: #F5F3FF;
+    --teal: #14B8A6;
+    --teal-light: #F0FDFA;
+    --red: #EF4444;
+    --navy: #1E293B;
+    --slate: #475569;
+    --muted: #94A3B8;
+    --bg: #FFFBF0;
+    --white: #FFFFFF;
+    --border: #E2E8F0;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-pill: 999px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  @keyframes pulse-ring { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(1.4);opacity:0} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes wiggle { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+  @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes progress-fill { from{width:0} to{width:var(--target)} }
+  @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+  .fade-up { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up-d1 { transition-delay: .1s; }
+  .fade-up-d2 { transition-delay: .2s; }
+  .fade-up-d3 { transition-delay: .3s; }
+  .fade-up-d4 { transition-delay: .4s; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,251,240,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(245,158,11,.2);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: var(--amber-dark);
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--navy); }
+  .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+  .nav-links a { font-size: .9rem; font-weight: 600; color: var(--slate); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--amber-dark); }
+  .btn-nav {
+    background: var(--amber);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .88rem;
+    border: none; border-radius: var(--radius-pill);
+    padding: 10px 22px; cursor: pointer;
+    box-shadow: 0 3px 12px rgba(245,158,11,.4);
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none;
+  }
+  .btn-nav:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,158,11,.5); }
+  .nav-mobile-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .nav-mobile-toggle span { width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all .3s; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    padding: 100px 5% 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 70% 60% at 80% 50%, #FEF3C7 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, #EFF6FF 0%, transparent 60%);
+  }
+  .hero-dots {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: radial-gradient(circle, rgba(245,158,11,.18) 1.5px, transparent 1.5px);
+    background-size: 36px 36px;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--amber-light);
+    border: 1.5px solid var(--amber-mid);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--amber-dark);
+    margin-bottom: 20px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge-dot {
+    width: 8px; height: 8px;
+    background: var(--amber);
+    border-radius: 50%;
+    position: relative;
+  }
+  .hero-badge-dot::after {
+    content: '';
+    position: absolute; inset: -4px;
+    background: var(--amber);
+    border-radius: 50%;
+    opacity: .3;
+    animation: pulse-ring 1.5s infinite;
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    line-height: 1.15;
+    color: var(--navy);
+    margin-bottom: 20px;
+    animation: fadeUp .6s .1s ease both;
+  }
+  .hero h1 .highlight {
+    color: var(--amber-dark);
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    height: 6px;
+    background: var(--amber-mid);
+    border-radius: 3px;
+    z-index: -1;
+  }
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--slate);
+    max-width: 500px;
+    margin-bottom: 32px;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .hero-cta-row {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .btn-primary {
+    background: var(--amber);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none; border-radius: var(--radius-pill);
+    padding: 15px 32px; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(245,158,11,.45);
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(245,158,11,.55); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 13px 28px; cursor: pointer;
+    transition: border-color .2s, color .2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--amber); color: var(--amber-dark); }
+  .hero-social {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 28px;
+    animation: fadeUp .6s .4s ease both;
+  }
+  .hero-avatars { display: flex; }
+  .hero-avatars span {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--white);
+    margin-left: -8px;
+    font-size: .75rem;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-avatars span:first-child { margin-left: 0; }
+  .av1 { background: #BFDBFE; color: #1D4ED8; }
+  .av2 { background: #BBF7D0; color: #15803D; }
+  .av3 { background: #FDE68A; color: #92400E; }
+  .av4 { background: #FECDD3; color: #9F1239; }
+  .av5 { background: #E9D5FF; color: #6D28D9; }
+  .hero-social p { font-size: .83rem; color: var(--slate); font-weight: 600; }
+  .hero-social strong { color: var(--navy); }
+
+  /* hero visual */
+  .hero-visual {
+    position: relative; z-index: 1;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .hero-card-main {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1.5px solid var(--amber-mid);
+  }
+  .hero-card-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-avatar-lg {
+    width: 44px; height: 44px;
+    background: #EFF6FF;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    animation: wiggle 3s ease infinite;
+  }
+  .hero-level {
+    background: var(--amber);
+    color: var(--white);
+    font-size: .72rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .hero-xp-bar { height: 8px; background: var(--amber-light); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+  .hero-xp-fill {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--amber), var(--coral));
+    border-radius: 4px;
+    --target: 64%;
+    animation: progress-fill 1.4s 1s ease forwards;
+  }
+  .quest-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+  }
+  .quest-done { background: var(--green-light); color: var(--green-dark); }
+  .quest-active { background: var(--amber-light); color: var(--amber-dark); border: 1.5px solid var(--amber-mid); }
+  .quest-locked { background: #F8FAFC; color: var(--muted); }
+  .quest-icon { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+  .check-circle { width: 18px; height: 18px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+  .check-done { background: var(--green); display: flex; align-items: center; justify-content: center; }
+  .check-done::after { content: '✓'; font-size: .65rem; color: white; font-weight: 900; }
+  .check-empty { border: 2px solid var(--amber); background: transparent; }
+  .check-lock { background: var(--border); }
+
+  .hero-float-badge {
+    position: absolute;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    box-shadow: var(--shadow);
+    font-size: .8rem;
+    font-weight: 700;
+    border: 1.5px solid;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hfb1 { top: -20px; right: -20px; border-color: var(--amber-mid); animation: float 3s 0s ease infinite; }
+  .hfb2 { bottom: 20px; left: -24px; border-color: #BFDBFE; animation: float 3s .8s ease infinite; }
+  .hfb3 { bottom: -16px; right: 20px; border-color: #BBF7D0; animation: float 3s 1.6s ease infinite; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--amber-light);
+    border-top: 2px solid var(--amber-mid);
+    border-bottom: 2px solid var(--amber-mid);
+    padding: 28px 5%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    text-align: center;
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--amber-dark);
+    display: block;
+  }
+  .stat-lbl { font-size: .82rem; color: #92400E; font-weight: 600; }
+
+  /* ── SECTION ── */
+  section { padding: 90px 5%; }
+  .section-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--amber-dark);
+    background: var(--amber-light);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+    margin-bottom: 14px;
+  }
+  .section-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  h2.section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    line-height: 1.2;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .section-sub { font-size: 1.05rem; color: var(--slate); max-width: 600px; }
+
+  /* ── PROBLEM ── */
+  .problem-section { background: var(--white); }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 52px;
+  }
+  .problem-card {
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .problem-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .problem-icon {
+    font-size: 2rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .problem-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; color: var(--navy); }
+  .problem-card p { font-size: .88rem; color: var(--slate); line-height: 1.6; }
+  .problem-accent {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+
+  /* ── SUBJECTS ── */
+  .subjects-section { background: var(--bg); }
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .subject-card {
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    border: 1.5px solid transparent;
+    cursor: default;
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .subject-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: .12;
+  }
+  .subject-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+  .subject-card h3 { font-size: .95rem; font-weight: 800; margin-bottom: 5px; }
+  .subject-card p { font-size: .8rem; line-height: 1.55; }
+  .subject-tag {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    margin-top: 10px;
+  }
+
+  /* individual subject colors */
+  .s-amber { background: var(--amber-light); border-color: var(--amber-mid); }
+  .s-amber h3 { color: var(--amber-dark); }
+  .s-amber p { color: #92400E; }
+  .s-amber .subject-tag { background: var(--amber-mid); color: var(--amber-dark); }
+  .s-amber::before { background: var(--amber); }
+
+  .s-blue { background: var(--blue-light); border-color: #BFDBFE; }
+  .s-blue h3 { color: var(--blue-dark); }
+  .s-blue p { color: #1E40AF; }
+  .s-blue .subject-tag { background: #BFDBFE; color: var(--blue-dark); }
+  .s-blue::before { background: var(--blue); }
+
+  .s-green { background: var(--green-light); border-color: #BBF7D0; }
+  .s-green h3 { color: var(--green-dark); }
+  .s-green p { color: #166534; }
+  .s-green .subject-tag { background: #BBF7D0; color: var(--green-dark); }
+  .s-green::before { background: var(--green); }
+
+  .s-purple { background: var(--purple-light); border-color: #DDD6FE; }
+  .s-purple h3 { color: #5B21B6; }
+  .s-purple p { color: #5B21B6; }
+  .s-purple .subject-tag { background: #DDD6FE; color: #5B21B6; }
+  .s-purple::before { background: var(--purple); }
+
+  .s-coral { background: var(--coral-light); border-color: #FDBA74; }
+  .s-coral h3 { color: #C2410C; }
+  .s-coral p { color: #9A3412; }
+  .s-coral .subject-tag { background: #FDBA74; color: #C2410C; }
+  .s-coral::before { background: var(--coral); }
+
+  .s-teal { background: var(--teal-light); border-color: #99F6E4; }
+  .s-teal h3 { color: #0F766E; }
+  .s-teal p { color: #115E59; }
+  .s-teal .subject-tag { background: #99F6E4; color: #0F766E; }
+  .s-teal::before { background: var(--teal); }
+
+  .s-red { background: #FFF1F2; border-color: #FECDD3; }
+  .s-red h3 { color: #9F1239; }
+  .s-red p { color: #881337; }
+  .s-red .subject-tag { background: #FECDD3; color: #9F1239; }
+  .s-red::before { background: var(--red); }
+
+  .s-navy { background: #F0F4FF; border-color: #C7D2FE; }
+  .s-navy h3 { color: #3730A3; }
+  .s-navy p { color: #3730A3; }
+  .s-navy .subject-tag { background: #C7D2FE; color: #3730A3; }
+  .s-navy::before { background: #6366F1; }
+
+  .extra-tag { background: #FEF9C3; color: #92400E; font-size: .7rem; font-weight: 800; padding: 2px 9px; border-radius: var(--radius-pill); border: 1.5px solid #FDE68A; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: var(--white); }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 52px;
+    position: relative;
+  }
+  .how-grid::before {
+    content: '';
+    position: absolute;
+    top: 36px; left: 12.5%; right: 12.5%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--amber) 0, var(--amber) 8px, transparent 8px, transparent 16px);
+    z-index: 0;
+  }
+  .how-step { text-align: center; padding: 0 16px; position: relative; z-index: 1; }
+  .how-num {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 3px solid var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: var(--amber-dark);
+    position: relative;
+    box-shadow: 0 4px 16px rgba(245,158,11,.2);
+  }
+  .how-step h3 { font-size: .95rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .how-step p { font-size: .83rem; color: var(--slate); line-height: 1.6; }
+
+  /* ── AGE TIERS ── */
+  .ages-section { background: var(--bg); }
+  .ages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .age-card {
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    border: 2px solid transparent;
+    text-align: center;
+    transition: transform .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .age-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+  .age-icon { font-size: 2.4rem; margin-bottom: 14px; display: block; }
+  .age-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.15rem; margin-bottom: 4px; }
+  .age-range { font-size: .82rem; font-weight: 700; margin-bottom: 12px; display: block; }
+  .age-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .age-tag { font-size: .72rem; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-pill); }
+
+  .ac-1 { background: #EFF6FF; border-color: #BFDBFE; }
+  .ac-1 h3 { color: var(--blue-dark); }
+  .ac-1 .age-range { color: var(--blue); }
+  .ac-1 .age-tag { background: #BFDBFE; color: var(--blue-dark); }
+
+  .ac-2 { background: var(--green-light); border-color: #BBF7D0; }
+  .ac-2 h3 { color: var(--green-dark); }
+  .ac-2 .age-range { color: var(--green); }
+  .ac-2 .age-tag { background: #BBF7D0; color: var(--green-dark); }
+
+  .ac-3 { background: var(--coral-light); border-color: #FDBA74; }
+  .ac-3 h3 { color: #C2410C; }
+  .ac-3 .age-range { color: var(--coral); }
+  .ac-3 .age-tag { background: #FDBA74; color: #C2410C; }
+
+  .ac-4 { background: var(--purple-light); border-color: #DDD6FE; }
+  .ac-4 h3 { color: #5B21B6; }
+  .ac-4 .age-range { color: var(--purple); }
+  .ac-4 .age-tag { background: #DDD6FE; color: #5B21B6; }
+
+  /* ── PRICING ── */
+  .pricing-section { background: var(--white); }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    max-width: 800px;
+    margin: 52px auto 0;
+  }
+  .plan-card {
+    border-radius: var(--radius);
+    padding: 36px 30px;
+    border: 2px solid var(--border);
+    position: relative;
+    transition: transform .2s;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.featured {
+    border-color: var(--amber);
+    background: linear-gradient(160deg, #FFFBF0 0%, #FEF3C7 100%);
+    box-shadow: 0 8px 32px rgba(245,158,11,.2);
+  }
+  .plan-featured-badge {
+    position: absolute;
+    top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--amber);
+    color: var(--white);
+    font-size: .75rem; font-weight: 800;
+    padding: 5px 18px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    letter-spacing: .04em;
+  }
+  .plan-name { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--navy); margin-bottom: 4px; }
+  .plan-price { display: flex; align-items: baseline; gap: 4px; margin: 16px 0 6px; }
+  .plan-price .price-num { font-family: 'Fredoka One', cursive; font-size: 2.8rem; color: var(--navy); }
+  .plan-price .price-free { font-family: 'Fredoka One', cursive; font-size: 2.8rem; color: var(--green-dark); }
+  .plan-price .price-period { font-size: .88rem; color: var(--muted); font-weight: 600; }
+  .plan-desc { font-size: .85rem; color: var(--slate); margin-bottom: 24px; line-height: 1.6; }
+  .plan-features { list-style: none; margin-bottom: 28px; }
+  .plan-features li {
+    font-size: .88rem; color: var(--slate);
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600;
+  }
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 900; flex-shrink: 0; }
+  .plan-features li.dim::before { content: '–'; color: var(--muted); }
+  .plan-features li.dim { color: var(--muted); }
+  .btn-plan {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-pill);
+    font-family: 'Nunito', sans-serif;
+    font-size: .95rem; font-weight: 800;
+    cursor: pointer; border: none;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-plan-free { background: var(--white); border: 2px solid var(--border); color: var(--navy); }
+  .btn-plan-free:hover { border-color: var(--amber); color: var(--amber-dark); }
+  .btn-plan-premium { background: var(--amber); color: var(--white); box-shadow: 0 4px 20px rgba(245,158,11,.4); }
+  .btn-plan-premium:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,.5); }
+  .plan-annual { font-size: .78rem; color: var(--green-dark); text-align: center; margin-top: 12px; font-weight: 700; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-section { background: var(--bg); }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .testimonial-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+    border: 1.5px solid var(--border);
+    position: relative;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .testimonial-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .t-stars { color: var(--amber); font-size: 1rem; margin-bottom: 14px; letter-spacing: 2px; }
+  .t-quote { font-size: .88rem; color: var(--slate); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
+  .t-author { display: flex; align-items: center; gap: 12px; }
+  .t-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .85rem; flex-shrink: 0; }
+  .t-name { font-size: .88rem; font-weight: 800; color: var(--navy); }
+  .t-role { font-size: .78rem; color: var(--muted); font-weight: 600; }
+
+  /* ── WAITLIST / CTA ── */
+  .cta-section {
+    background: linear-gradient(160deg, #FFFBF0 0%, #FEF3C7 60%, #FDE68A 100%);
+    border-top: 2px solid var(--amber-mid);
+    padding: 100px 5%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg-circles {
+    position: absolute; inset: 0; z-index: 0;
+    overflow: hidden;
+  }
+  .cta-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(245,158,11,.1);
+  }
+  .c1 { width: 600px; height: 600px; top: -200px; left: -150px; }
+  .c2 { width: 400px; height: 400px; bottom: -100px; right: -50px; }
+  .cta-section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    color: var(--navy);
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .cta-section h2 span { color: var(--amber-dark); }
+  .cta-section p { font-size: 1.05rem; color: var(--slate); margin-bottom: 36px; position: relative; z-index: 1; }
+  .waitlist-form {
+    display: flex; gap: 12px; max-width: 500px; margin: 0 auto 16px;
+    position: relative; z-index: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .waitlist-input {
+    flex: 1; min-width: 240px;
+    padding: 15px 20px;
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--amber-mid);
+    background: var(--white);
+    color: var(--navy);
+    font-family: 'Nunito', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .waitlist-input::placeholder { color: var(--muted); }
+  .waitlist-input:focus { border-color: var(--amber-dark); }
+  .btn-waitlist {
+    background: var(--amber);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .95rem;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 15px 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245,158,11,.4);
+    transition: transform .15s;
+    white-space: nowrap;
+  }
+  .btn-waitlist:hover { transform: translateY(-2px); }
+  .cta-note { font-size: .8rem; color: var(--slate); position: relative; z-index: 1; }
+  #success-msg { display: none; font-size: 1rem; color: var(--amber-dark); font-weight: 800; margin-top: 12px; position: relative; z-index: 1; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #2D3748;
+    padding: 48px 5%;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .footer-brand .nav-logo { font-size: 1.4rem; margin-bottom: 12px; display: inline-block; }
+  .footer-brand p { font-size: .83rem; color: rgba(255,255,255,.6); line-height: 1.7; max-width: 260px; }
+  .footer-col h4 { font-size: .85rem; font-weight: 800; color: rgba(255,255,255,.9); margin-bottom: 14px; }
+  .footer-col a { display: block; font-size: .82rem; color: rgba(255,255,255,.55); text-decoration: none; margin-bottom: 8px; transition: color .2s; }
+  .footer-col a:hover { color: var(--amber); }
+  .footer-bottom {
+    background: #1A2233;
+    padding: 16px 5%;
+    border-top: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-bottom p { font-size: .78rem; color: rgba(255,255,255,.45); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .problem-grid { grid-template-columns: 1fr 1fr; }
+    .how-grid { grid-template-columns: 1fr 1fr; }
+    .how-grid::before { display: none; }
+    .ages-grid { grid-template-columns: 1fr 1fr; }
+    footer { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding-top: 90px; gap: 40px; }
+    .hero-visual { order: -1; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .how-grid { grid-template-columns: 1fr 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .ages-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .nav-mobile-toggle { display: flex; }
+    footer { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+  @media (max-width: 480px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .ages-grid { grid-template-columns: 1fr; }
+    .subjects-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+<meta property="og:title" content="KidQuest — Where Every Day Is an Adventure in Learning" />
+<meta property="og:description" content="A personalized, gamified learning dashboard for kids aged 3–15. Built by parents, loved by kids." />
+<meta property="og:image" content="https://yourdomain.com/kidquest_logo_wide.png" />
+<meta name="twitter:card" content="summary_large_image" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#"><img src="data:image/png;base64,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" style="width:36px;height:36px;border-radius:8px;object-fit:cover;" alt="KidQuest" /> Kid<span>Quest</span></a>
+  <ul class="nav-links">
+    <li><a href="#subjects">Subjects</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#ages">Age groups</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a class="btn-nav" href="#waitlist">Join the waitlist</a>
+  <div class="nav-mobile-toggle" onclick="this.classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dots"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Now in early access · Ages 6–15
+    </div>
+    <h1>
+      Turn screen time into<br />
+      <span class="highlight">brain time</span>
+    </h1>
+    <p>A personalized, gamified learning dashboard parents build and kids actually <em>want</em> to use. Covering mental math, financial literacy, world history, science, and French. No more aimless videos.</p>
+    <div class="hero-cta-row">
+      <a class="btn-primary" href="https://tally.so/r/1AbkrL" target="_blank" rel="noopener">Get early access — it's free</a>
+      <a class="btn-secondary" href="#how">See how it works</a>
+    </div>
+    <div class="hero-social">
+      <div class="hero-avatars">
+        <span class="av1">SM</span>
+        <span class="av2">JL</span>
+        <span class="av3">KP</span>
+        <span class="av4">MR</span>
+        <span class="av5">DB</span>
+      </div>
+      <p><strong>248 parents</strong> already on the waitlist</p>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card-main" style="position:relative;">
+      <div class="hero-float-badge hfb1">
+        🏆 <span style="color:#92400E;">+80 XP earned today!</span>
+      </div>
+      <div class="hero-float-badge hfb2" style="color:#1D4ED8;">
+        💡 <span>Mental math unlocked</span>
+      </div>
+      <div class="hero-float-badge hfb3" style="color:#15803D;">
+        🔥 <span>7-day streak!</span>
+      </div>
+      <div class="hero-card-header">
+        <div class="hero-avatar-lg">🚀</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <strong style="font-size:.95rem;color:#1E293B;">Alex's Space Academy</strong>
+            <span class="hero-level">Level 7</span>
+          </div>
+          <div style="font-size:.75rem;color:#94A3B8;margin-top:3px;">Mission Commander · 320 / 500 XP</div>
+          <div class="hero-xp-bar" style="margin-top:6px;">
+            <div class="hero-xp-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="quest-item quest-done">
+        <div class="quest-icon" style="background:#D1FAE5;">🧮</div>
+        <span>Mental Math Sprint</span>
+        <div class="check-circle check-done" style="margin-left:auto;"></div>
+      </div>
+      <div class="quest-item quest-active">
+        <div class="quest-icon" style="background:#FDE68A;">💰</div>
+        <span>Money & Savings (Fr)</span>
+        <div class="check-circle check-empty" style="margin-left:auto;"></div>
+      </div>
+      <div class="quest-item quest-locked">
+        <div class="quest-icon" style="background:#F1F5F9;">🏛️</div>
+        <span>Ancient History Quest</span>
+        <div class="check-circle check-lock" style="margin-left:auto;"></div>
+      </div>
+      <div class="quest-item quest-locked">
+        <div class="quest-icon" style="background:#F1F5F9;">🙏</div>
+        <span>Evening Devotion</span>
+        <div class="check-circle check-lock" style="margin-left:auto;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num">6–15</span>
+    <span class="stat-lbl">Age range covered</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">12+</span>
+    <span class="stat-lbl">Unique subject tracks</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">8</span>
+    <span class="stat-lbl">Themed worlds</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">100%</span>
+    <span class="stat-lbl">Parent-controlled</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section" id="problem">
+  <div class="section-badge"><div class="section-badge-dot"></div> The problem</div>
+  <h2 class="section-title fade-up">Kids are online anyway.<br />Shouldn't it count for something?</h2>
+  <p class="section-sub fade-up fade-up-d1">Most screen time apps either block everything or allow everything. KidQuest is the structured middle ground parents have been waiting for.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card fade-up">
+      <div class="problem-accent" style="background:linear-gradient(90deg,#EF4444,#F97316);"></div>
+      <span class="problem-icon">📱</span>
+      <h3>Aimless scrolling & YouTube rabbit holes</h3>
+      <p>The average child spends 4+ hours per day on screens. Less than 10% of that time is structured or educational in any meaningful way.</p>
+    </div>
+    <div class="problem-card fade-up fade-up-d1">
+      <div class="problem-accent" style="background:linear-gradient(90deg,#F59E0B,#EAB308);"></div>
+      <span class="problem-icon">🏫</span>
+      <h3>School only covers the basics</h3>
+      <p>Curriculum leaves out mental math, financial literacy, logic, and critical thinking. These are skills that set adults apart. KidQuest fills those gaps.</p>
+    </div>
+    <div class="problem-card fade-up fade-up-d2">
+      <div class="problem-accent" style="background:linear-gradient(90deg,#8B5CF6,#6366F1);"></div>
+      <span class="problem-icon">😤</span>
+      <h3>Nagging doesn't build habits</h3>
+      <p>Telling kids to "go study" creates friction and resistance. A personal quest board they've helped build creates ownership and daily motivation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SUBJECTS -->
+<section class="subjects-section" id="subjects">
+  <div class="section-badge"><div class="section-badge-dot"></div> What they'll learn</div>
+  <h2 class="section-title fade-up">Beyond the standard curriculum</h2>
+  <p class="section-sub fade-up fade-up-d1">Every subject is age-calibrated, themed to your child's world, and delivered in bite-sized daily quests. Parents choose the mix.</p>
+
+  <div class="subjects-grid">
+    <div class="subject-card s-amber fade-up">
+      <span class="subject-icon">🧮</span>
+      <h3>Mental Math</h3>
+      <p>Daily speed drills, number patterns, and estimation challenges that go well beyond classroom arithmetic.</p>
+      <span class="subject-tag">Grades 1–8</span>
+      <span class="extra-tag" style="margin-left:4px;">🔥 Extra</span>
+    </div>
+    <div class="subject-card s-green fade-up fade-up-d1">
+      <span class="subject-icon">💰</span>
+      <h3>Financial Literacy</h3>
+      <p>Saving, budgeting, compound interest, entrepreneurship, and investing — taught at their level, not textbook-style.</p>
+      <span class="subject-tag">All ages</span>
+      <span class="extra-tag" style="margin-left:4px;">🔥 Extra</span>
+    </div>
+    <div class="subject-card s-coral fade-up fade-up-d2">
+      <span class="subject-icon">🏛️</span>
+      <h3>World History</h3>
+      <p>Ancient civilizations, empires, revolutions, and modern events turned into quest narratives that actually stick.</p>
+      <span class="subject-tag">Ages 6+</span>
+      <span class="extra-tag" style="margin-left:4px;">🔥 Extra</span>
+    </div>
+    <div class="subject-card s-blue fade-up fade-up-d3">
+      <span class="subject-icon">🔬</span>
+      <h3>Science & Nature</h3>
+      <p>Physics, biology, chemistry, and earth science through experiments, videos, and themed projects kids actually do.</p>
+      <span class="subject-tag">Ages 5+</span>
+    </div>
+    <div class="subject-card s-purple fade-up">
+      <span class="subject-icon">🧠</span>
+      <h3>Critical Thinking</h3>
+      <p>Logic puzzles, Socratic questions, pattern recognition, and debate prompts to build sharp reasoning skills early.</p>
+      <span class="subject-tag">Ages 7+</span>
+      <span class="extra-tag" style="margin-left:4px;">🔥 Extra</span>
+    </div>
+    <div class="subject-card s-teal fade-up fade-up-d1">
+      <span class="subject-icon">🌍</span>
+      <h3>Languages & French</h3>
+      <p>Daily reading, writing exercises, vocabulary, and pronunciation through games and Duolingo-linked quests.</p>
+      <span class="subject-tag">All ages</span>
+    </div>
+    <div class="subject-card s-red fade-up fade-up-d2">
+      <span class="subject-icon">🗺️</span>
+      <h3>Geography</h3>
+      <p>Flags, capitals, maps, cultures, and current events presented through exploration missions and challenges.</p>
+      <span class="subject-tag">Ages 5+</span>
+    </div>
+    <div class="subject-card s-navy fade-up fade-up-d3">
+      <span class="subject-icon">💻</span>
+      <h3>Intro to Coding</h3>
+      <p>Block coding to Python basics, project building, and algorithmic thinking for the next generation of builders.</p>
+      <span class="subject-tag">Ages 8+</span>
+    </div>
+    <div class="subject-card s-amber fade-up">
+      <span class="subject-icon">📚</span>
+      <h3>Reading & Writing</h3>
+      <p>Daily reading logs, comprehension, journaling, vocabulary expansion, and creative writing prompts.</p>
+      <span class="subject-tag">All ages</span>
+    </div>
+    <div class="subject-card s-coral fade-up fade-up-d1">
+      <span class="subject-icon">🎨</span>
+      <h3>Art & Creativity</h3>
+      <p>Drawing techniques, design fundamentals, art history, and creative Canva projects linked to their theme world.</p>
+      <span class="subject-tag">All ages</span>
+    </div>
+    <div class="subject-card s-green fade-up fade-up-d2">
+      <span class="subject-icon">🙏</span>
+      <h3>Values & Devotion</h3>
+      <p>Optional daily devotional, prayer journaling, and character-building exercises for faith-centred families.</p>
+      <span class="subject-tag">Parent choice</span>
+    </div>
+    <div class="subject-card s-purple fade-up fade-up-d3">
+      <span class="subject-icon">🧬</span>
+      <h3>Life Skills & Health</h3>
+      <p>Nutrition, physical literacy, mindfulness, conflict resolution, and the basics every kid needs but rarely gets taught.</p>
+      <span class="subject-tag">Ages 5+</span>
+      <span class="extra-tag" style="margin-left:4px;">🔥 Extra</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="section-badge"><div class="section-badge-dot"></div> How it works</div>
+  <h2 class="section-title fade-up">Set it up in 5 minutes.<br />Kids stay busy for hours.</h2>
+  <p class="section-sub fade-up fade-up-d1">Parents are in full control. Kids get a personalized world they actually want to return to every single day.</p>
+
+  <div class="how-grid">
+    <div class="how-step fade-up">
+      <div class="how-num">1</div>
+      <h3>Create your child's profile</h3>
+      <p>Enter their name, age group, preferred language, and learning goals. Takes under 2 minutes.</p>
+    </div>
+    <div class="how-step fade-up fade-up-d1">
+      <div class="how-num">2</div>
+      <h3>Pick their world & subjects</h3>
+      <p>Choose from 8 adventure themes including Construction, Space, Ocean, and more, then toggle on the subjects you want covered.</p>
+    </div>
+    <div class="how-step fade-up fade-up-d2">
+      <div class="how-num">3</div>
+      <h3>Set the daily schedule</h3>
+      <p>Add unlock times, screen limits, and custom tasks. Each quest appears at the right time, so there's no negotiating.</p>
+    </div>
+    <div class="how-step fade-up fade-up-d3">
+      <div class="how-num">4</div>
+      <h3>Kids earn XP & level up</h3>
+      <p>Completing quests earns XP, badges, and unlocks new content. Progress reports come straight to you weekly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AGE GROUPS -->
+<section class="ages-section" id="ages">
+  <div class="section-badge"><div class="section-badge-dot"></div> Age groups</div>
+  <h2 class="section-title fade-up">Calibrated for every stage</h2>
+  <p class="section-sub fade-up fade-up-d1">Content, vocabulary, difficulty, and quest length all adapt to your child's age group automatically. Switch tiers as they grow.</p>
+
+  <div class="ages-grid">
+    <div class="age-card ac-1 fade-up">
+      <span class="age-icon">🌱</span>
+      <h3>Explorers</h3>
+      <span class="age-range">Ages 6–8</span>
+      <div class="age-tags">
+        <span class="age-tag">Math facts</span>
+        <span class="age-tag">Reading</span>
+        <span class="age-tag">Money basics</span>
+        <span class="age-tag">Science</span>
+        <span class="age-tag">Drawing</span>
+      </div>
+    </div>
+    <div class="age-card ac-2 fade-up fade-up-d1">
+      <span class="age-icon">🚀</span>
+      <h3>Adventurers</h3>
+      <span class="age-range">Ages 9–11</span>
+      <div class="age-tags">
+        <span class="age-tag">Mental math</span>
+        <span class="age-tag">World history</span>
+        <span class="age-tag">Budgeting</span>
+        <span class="age-tag">Coding</span>
+        <span class="age-tag">Drawing</span>
+      </div>
+    </div>
+    <div class="age-card ac-3 fade-up fade-up-d2">
+      <span class="age-icon">🚀</span>
+      <h3>Adventurers</h3>
+      <span class="age-range">Ages 9–11</span>
+      <div class="age-tags">
+        <span class="age-tag">Mental math</span>
+        <span class="age-tag">World history</span>
+        <span class="age-tag">Budgeting</span>
+        <span class="age-tag">Coding</span>
+        <span class="age-tag">Logic</span>
+      </div>
+    </div>
+    <div class="age-card ac-4 fade-up fade-up-d3">
+      <span class="age-icon">🏆</span>
+      <h3>Pioneers</h3>
+      <span class="age-range">Ages 12–15</span>
+      <div class="age-tags">
+        <span class="age-tag">Investing</span>
+        <span class="age-tag">Critical thinking</span>
+        <span class="age-tag">Advanced coding</span>
+        <span class="age-tag">Essays</span>
+        <span class="age-tag">Debates</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div style="text-align:center;">
+    <div class="section-badge" style="margin:0 auto 14px;display:inline-flex;"><div class="section-badge-dot"></div> Pricing</div>
+    <h2 class="section-title fade-up">Simple, family-friendly pricing</h2>
+    <p class="section-sub fade-up fade-up-d1" style="margin:0 auto;">Start free forever. Upgrade when you're ready. No lock-in, cancel anytime.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="plan-card fade-up">
+      <div class="plan-name">Free Forever</div>
+      <div class="plan-price"><span class="price-free">$0</span><span class="price-period">/ month</span></div>
+      <p class="plan-desc">Great for trying it out with one child. No credit card needed, no expiry.</p>
+      <ul class="plan-features">
+        <li>1 child profile</li>
+        <li>3 adventure themes</li>
+        <li>4 core subjects</li>
+        <li>Basic daily schedule</li>
+        <li>XP & level system</li>
+        <li class="dim">Progress reports</li>
+        <li class="dim">Financial literacy track</li>
+        <li class="dim">Mental math drills</li>
+        <li class="dim">Custom quick links</li>
+      </ul>
+      <button class="btn-plan btn-plan-free" onclick="window.open('https://tally.so/r/1AbkrL','_blank')">Get started free</button>
+    </div>
+    <div class="plan-card featured fade-up fade-up-d1">
+      <div class="plan-featured-badge">✦ Most popular</div>
+      <div class="plan-name">Family Premium</div>
+      <div class="plan-price"><span class="price-num">$9</span><span class="price-period">/ month</span></div>
+      <p class="plan-desc">Full access for up to 5 children. Everything unlocked, unlimited customization.</p>
+      <ul class="plan-features">
+        <li>Up to 5 child profiles</li>
+        <li>All 8 adventure themes</li>
+        <li>All 12+ subject tracks</li>
+        <li>Full schedule builder</li>
+        <li>XP, badges & leaderboards</li>
+        <li>Weekly progress reports</li>
+        <li>Financial literacy track</li>
+        <li>Mental math drills</li>
+        <li>Custom quick links & tools</li>
+      </ul>
+      <button class="btn-plan btn-plan-premium" onclick="window.open('https://tally.so/r/1AbkrL','_blank')">Start free trial</button>
+      <p class="plan-annual">Save 30% with annual billing, just $75/year</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-badge"><div class="section-badge-dot"></div> Early feedback</div>
+  <h2 class="section-title fade-up">What parents are saying</h2>
+  <p class="section-sub fade-up fade-up-d1">These are early beta testers and parents who've seen the mockup. Real product coming soon.</p>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-up">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"My 8-year-old has never been excited about learning. The construction theme completely changed that. He's asking to do his quests before dinner now, without me asking."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#BFDBFE;color:#1D4ED8;">SM</div>
+        <div>
+          <div class="t-name">Sandra M.</div>
+          <div class="t-role">Mom of 2 · Ontario, Canada</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up fade-up-d1">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"The financial literacy section is something I've wanted for years. My 10-year-old is now talking about saving up for things instead of just asking us to buy everything."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#BBF7D0;color:#15803D;">JL</div>
+        <div>
+          <div class="t-name">James L.</div>
+          <div class="t-role">Dad of 3 · Montreal, QC</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up fade-up-d2">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"Finally something that combines structured learning with the fun kids actually want. The bilingual support for French is a huge bonus for us as a francophone family."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#E9D5FF;color:#6D28D9;">KP</div>
+        <div>
+          <div class="t-name">Karine P.</div>
+          <div class="t-role">Mom of 4 · Quebec City, QC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="cta-bg-circles">
+    <div class="cta-circle c1"></div>
+    <div class="cta-circle c2"></div>
+  </div>
+  <h2>Ready to give your kids a <span>smarter</span> screen?</h2>
+  <p>Join the waitlist for early access. Founding members lock in 50% off premium forever.</p>
+  <div style="position:relative;z-index:1;width:100%;max-width:560px;margin:0 auto 16px;">
+    <iframe src="https://tally.so/embed/1AbkrL?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+      loading="lazy" width="100%" height="120" frameborder="0" marginheight="0" marginwidth="0"
+      title="KidQuest Waitlist" id="tally-iframe"
+      style="border:none;background:transparent;"></iframe>
+  </div>
+  <p class="cta-note" style="position:relative;z-index:1;">No spam. No commitment. Early access + 50% off for founding members.</p>
+  <script>
+    var d=document,w="https://tally.so/widgets/embed.js";
+    function loadTally(){if(typeof Tally!=="undefined"){Tally.loadEmbeds();}else{d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e){e.src=e.dataset.tallySrc;});}}
+    if(typeof Tally!=="undefined"){loadTally();}else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w;s.onload=loadTally;s.onerror=loadTally;d.body.appendChild(s);}
+    window.addEventListener("message",function(e){if(e.data&&e.data.type==="tally-form-submit-callback"){document.getElementById("tally-iframe").style.display="none";var p=document.createElement("p");p.style.cssText="font-size:1rem;color:#F59E0B;font-weight:800;margin-top:12px;position:relative;z-index:1;text-align:center;";p.textContent="🎉 You're on the list! We'll be in touch soon.";document.getElementById("tally-iframe").parentNode.appendChild(p);}});
+  </script>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="#">Kid<span style="color:rgba(255,255,255,.5);">Quest</span> 🧱</a>
+    <p>A structured, gamified learning platform built for kids aged 6–15. Parent-powered. Child-loved.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Product</h4>
+    <a href="#subjects">Subjects</a>
+    <a href="#how">How it works</a>
+    <a href="#ages">Age groups</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="footer-col">
+    <h4>Subjects</h4>
+    <a href="#">Mental Math</a>
+    <a href="#">Financial Literacy</a>
+    <a href="#">World History</a>
+    <a href="#">Coding</a>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <a href="#">About</a>
+    <a href="https://tally.so/r/1AbkrL" target="_blank" rel="noopener">Join Waitlist</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2026 KidQuest. All rights reserved.</p>
+  <p>Made with ❤️ for parents who want more for their kids.</p>
+</div>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+
+  function handleWaitlist(e) {
+    e.preventDefault();
+    const val = document.getElementById('email-input').value;
+    if (val) {
+      document.querySelector('.waitlist-form').style.display = 'none';
+      document.getElementById('success-msg').style.display = 'block';
+    }
+  }
+
+  // Smooth scroll for anchors
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
